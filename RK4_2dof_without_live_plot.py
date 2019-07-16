@@ -76,7 +76,7 @@ for F0 in Forces:
         tmin = max(t)-10*tp
         amp1f = max(x[t>tmin,0])
         amp2f = max(x[t>tmin,2])
-        outF.write(("{0:10.5f}{1:10.5f}{2:10.5f}\n").format(omgs,amp1f,amp2f))
+        outF.write(("{0:5.5f}{1:10.10f}{2:10.10f}\n").format(omgs,amp1f,amp2f))
         init = [amp1f,0,0,0]
     # Backward Sweep
     for omgs in omgb:
@@ -85,7 +85,7 @@ for F0 in Forces:
         tmin = max(t)-10*tp
         amp1b = max(x[t>tmin,0])
         amp2b = max(x[t>tmin,2])
-        outB.write(("{0:10.5f}{1:10.5f}{2:10.5f}\n").format(omgs,amp1b,amp2b))
+        outB.write(("{0:5.5f}{1:10.10f}{2:10.10f}\n").format(omgs,amp1b,amp2b))
         init = [amp1b,0,0,0]
     outF.close()
     outB.close()
