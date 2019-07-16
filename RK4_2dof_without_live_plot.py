@@ -66,9 +66,9 @@ for F0 in Forces:
         os.makedirs(directory)
     tPath=os.path.join(directory,fileName)
     outF = open(tPath+"_FWD.csv","w")
-    outF.write("Omega   Amp1    Amp2\n")
+    outF.write("Omega,Amp1,Amp2\n")
     outB = open(tPath+"_BKW.csv","w")
-    outB.write("Omega   Amp1    Amp2\n")
+    outB.write("Omega,Amp1,Amp2\n")
     # Forward Sweep
     for omgs in omgf:
         x = my_RK4(two_dof_cubic, init, t,F0,omgs,m,c,k1,k2,a3,a3_12)
@@ -76,7 +76,7 @@ for F0 in Forces:
         tmin = max(t)-10*tp
         amp1f = max(x[t>tmin,0])
         amp2f = max(x[t>tmin,2])
-        outF.write(("{0:5.5f}{1:10.10f}{2:10.10f}\n").format(omgs,amp1f,amp2f))
+        outF.write(("{0:5.5f},{1:8.8f},{2:8.8f}\n").format(omgs,amp1f,amp2f))
         init = [amp1f,0,0,0]
     # Backward Sweep
     for omgs in omgb:
@@ -85,7 +85,7 @@ for F0 in Forces:
         tmin = max(t)-10*tp
         amp1b = max(x[t>tmin,0])
         amp2b = max(x[t>tmin,2])
-        outB.write(("{0:5.5f}{1:10.10f}{2:10.10f}\n").format(omgs,amp1b,amp2b))
+        outB.write(("{0:5.5f},{1:8.8f},{2:8.8f}\n").format(omgs,amp1b,amp2b))
         init = [amp1b,0,0,0]
     outF.close()
     outB.close()
