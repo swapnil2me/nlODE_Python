@@ -45,7 +45,7 @@ def draw_fig(omgs, amp):
     #plt.plot(omgs, amp, 'ro')
     plt.show()
 
-F0 = 0.1e0
+Forces = np.linspace(0.05e0, 0.1e0, 5)
 omgf = np.linspace(2.5e0, 3.6e0, 500e0)
 omgb = np.flip(omgf)
 m = 1.0e0
@@ -60,34 +60,56 @@ init = [0.0, 0.0, 0.0, 0.0]
 t = np.linspace(0.0, 500.0e0, 3001e0)
 plt.ion()
 plt.figure()
-for omgs in omgf:
-    x = my_RK4(dampfunc, init, t,F0,omgs,m,c,k1,k2,a3,a3_12)
-    tp = 2*np.pi/omgs
-    tmin = max(t)-10*tp
-    amp1 = max(x[t>tmin,0])
-    amp2 = max(x[t>tmin,2])
-    init = [amp1,0,0,0]
-    f2 = plt.figure(1)
-    plt.plot(omgs, amp1, 'ro')
-    plt.plot(omgs, amp2, 'ko')
-    #plt.axis([1.5,10.5,0,25])
-    #plt.plot(t,x[:,0])
-    plt.pause(0.000000001)
-    #plt.show()
-    #drawnow(draw_fig(omgs, amp))
-    #plt.cla()
-    #plt.show()
-#save2Fold_timeseries_csv(x,'my_data','timeseries')
-for omgs in omgb:
-    x = my_RK4(dampfunc, init, t,F0,omgs,m,c,k,a3)
-    tp = 2*np.pi/omgs
-    tmin = max(t)-10*tp
-    amp1 = max(x[t>tmin,0])
-    amp2 = max(x[t>tmin,2])
-    init = [amp1,0,0,0]
-    f2 = plt.figure(1)
-    plt.plot(omgs, amp1, 'bo')
-    plt.plot(omgs, amp2, 'yo')
-    plt.pause(0.000000001)
-plt.show()
-#f2.show()
+
+directory = "Force_freq_sweep"
+
+for F0 in Forces:
+    fileName = "Force_"+'{:05.2f}'.format(F0)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    tPath=os.path.join(directory,fileName)
+
+
+    outF = open(tPath+"_FWD.csv","w")
+    outF.write("Omega   Amp1    Amp2\n")
+    outB = open(tPath+"_BKW.csv","w")
+    outB.write("Omega   Amp1    Amp2\n")
+    for omgs in omgf:
+        x = my_RK4(dampfunc, init, t,F0,omgs,m,c,k1,k2,a3,a3_12)
+        tp = 2*np.pi/omgs
+        tmin = max(t)-10*tp
+        amp1f = max(x[t>tmin,0])
+        amp2f = max(x[t>tmin,2])
+
+        outF.write(("{0:10.5f}{1:10.5f}{2:10.5f}\n").format(omgs,amp1f,amp2f))
+
+        init = [amp1f,0,0,0]
+        f2 = plt.figure(1)
+        plt.plot(omgs, amp1f, 'ro')
+        plt.plot(omgs, amp2f, 'ko')
+        #plt.axis([1.5,10.5,0,25])
+        #plt.plot(t,x[:,0])
+        plt.pause(0.000000001)
+        #plt.show()
+        #drawnow(draw_fig(omgs, amp))
+        #plt.cla()
+        #plt.show()
+    #save2Fold_timeseries_csv(x,'my_data','timeseries')
+    for omgs in omgb:
+        x = my_RK4(dampfunc, init, t,F0,omgs,m,c,k1,k2,a3,a3_12)
+        tp = 2*np.pi/omgs
+        tmin = max(t)-10*tp
+        amp1b = max(x[t>tmin,0])
+        amp2b = max(x[t>tmin,2])
+
+        outB.write(("{0:10.5f}{1:10.5f}{2:10.5f}\n").format(omgs,amp1b,amp2b))
+
+        init = [amp1b,0,0,0]
+        f2 = plt.figure(1)
+        plt.plot(omgs, amp1b, 'bo')
+        plt.plot(omgs, amp2b, 'yo')
+        plt.pause(0.000000001)
+    plt.show()
+    #f2.show()
+    outF.close()
+    outB.close()
